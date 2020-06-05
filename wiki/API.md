@@ -29,7 +29,6 @@ POST /user/info
  код ответа будет указывать на ошибку например: **400** 
 ```json
 {
-  "success": false,
   "error": "message"
 }
 ```

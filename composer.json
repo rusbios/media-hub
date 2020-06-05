@@ -1,0 +1,21 @@
+{
+  "name": "rusbios/medihub",
+  "description": "MediaHub module from Laravel",
+  "minimum-stability": "stable",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Ryssia",
+      "email": "info@rusbios.ru"
+    }
+  ],
+  "require": {
+    
+  },
+  "autoload": {
+    "psr-4": {
+      "RusBios\\MediaHub\\": "src/"
+    },
+    "classmap": []
+  }
+}
