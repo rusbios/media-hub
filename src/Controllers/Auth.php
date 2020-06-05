@@ -3,17 +3,27 @@
 namespace RusBios\MediaHub\Controllers;
 
 use App\Http\Controllers\Controller;
+use Exception;
 use Illuminate\Auth\AuthenticationException;
-use RusBios\MediaHub\Models\User;
-use RusBios\MediaHub\Utils\MbString;
-use RusBios\MediaHub\Services\Token;
-use RusBios\MediaHub\Validations\{UserLogIn, UserNewPassword, UserReg};
+use RusBios\MediaHub\Services\Auth as SAuth;
 use Illuminate\Http\{Request, Response};
-use Illuminate\Support\Facades\{Auth as FAuth, Hash, Route};
+use Illuminate\Support\Facades\Route;
 
 class Auth extends Controller
 {
     use ResponseTrait;
+
+    /** @var SAuth */
+    private $authService;
+
+    /**
+     * Auth constructor.
+     * @param SAuth $authService
+     */
+    public function __construct(SAuth $authService)
+    {
+        $this->authService = $authService;
+    }
 
     /**
      * @param Request $request
@@ -21,24 +31,11 @@ class Auth extends Controller
      */
     public function registration(Request $request): Response
     {
-        $data = UserReg::getValidData($request);
-
-        $data['password'] = Hash::make($data['password']);
-        if ($data) {
-            $user = (new User())->fill($data);
-
-            if (UserReg::isDuplicate($user)) {
-                return $this->getError('Such user already exists');
-            }
-
-            $user->save();
-
-            FAuth::login($user, true);
-
-            return $this->getSuccess(['user' => $user->jsonSerialize(true)]);
+        try {
+            return $this->getSuccess($this->authService->registration($request));
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        return $this->getError('incorrectly filled data');
     }
 
     /**
@@ -47,21 +44,11 @@ class Auth extends Controller
      */
     public function recover(string $email): Response
     {
-        /** @var User $user */
-        $user = User::query()
-            ->where('email', $email)
-            ->first();
-
-        if (!$user) {
-            return $this->getError('invalid email');
+        try {
+            return $this->getSuccess($this->authService->recover($email));
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        $user->remember_token = MbString::generateSymbols(100);
-        $user->save();
-
-        //TODO send email
-
-        return $this->getSuccess([]);
     }
 
     /**
@@ -70,19 +57,11 @@ class Auth extends Controller
      */
     public function confirmEmail(Request $request): Response
     {
-        /** @var User $user */
-        $user = User::query()
-            ->where('email', $request->get('email', ''))
-            ->first();
-
-        if (!$user) {
-            return $this->getError('invalid email');
+        try {
+            return $this->getSuccess($this->authService->confirmEmail($request));
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        $user->email_verified_at = new \DateTime();
-        $user->save();
-
-        return $this->getSuccess([]);
     }
 
     /**
@@ -91,34 +70,13 @@ class Auth extends Controller
      */
     public function newPass(Request $request): Response
     {
-        if ($request->get('token')) {
-            $user = User::query()
-                ->where('remember_token', $request->get('token'))
-                ->first();
-        } else {
-            try {
-                $user = $this->decodeToken($request);
-            } catch (AuthenticationException $e) {
-                return $this->getError($e->getMessage());
-            }
+        try {
+            return $this->getSuccess($this->authService->newPass($request));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), 401);
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        if (!$user) {
-            return $this->getError('Invalid token');
-        }
-
-        $data = UserNewPassword::getValidData($request);
-
-        if (!$data) {
-            return $this->getError('Invalid password');
-        }
-
-        $user->remember_token = null;
-        $user->password = Hash::make($data['password']);
-
-        $user->save();
-
-        return $this->getSuccess([]);
     }
 
     /**
@@ -142,20 +100,11 @@ class Auth extends Controller
      */
     public function getApiToken(Request $request): Response
     {
-        $data = UserLogIn::getValidData($request);
-
-        if ($data) {
-            /** @var User $user */
-            $user = User::query()
-                ->where('email', $data['email'])
-                ->first();
-
-            if ($user && Hash::check($data['password'], $user->password)) {
-                return $this->getSuccess(['token' => Token::created($request, $user)]);
-            }
+        try {
+            return $this->getSuccess($this->authService->getApiToken($request));
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        return $this->getError('invalid data');
     }
 
     public static function route(): void
