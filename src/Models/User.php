@@ -62,4 +62,27 @@ class User extends \App\Models\User
             ->where('default', 1)
             ->first();
     }
+
+    /**
+     * @param bool $isShort
+     * @return array
+     */
+    public function jsonSerialize($isShort = false): array
+    {
+        if ($isShort) {
+            return [
+                'id' => $this->id,
+                'name' => $this->name,
+                'email' => $this->email,
+            ];
+        }
+
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'is_valid_email' => $this->email_verified_at != null,
+            'created_at' => $this->created_at->format('Y-m-d H.i.s'),
+        ];
+    }
 }

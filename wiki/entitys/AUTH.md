@@ -2,7 +2,7 @@
 
 ### Информация об авторизации
 ```http request
-GET /user/info
+GET /auth/info
 ```
 
 ожидаемый ответ:
@@ -19,7 +19,7 @@ GET /user/info
 
 ### Регистрация
 ```http request
-POST /user/reg
+POST /auth/reg
 {
   "name": "string",
   "email":  "string",
@@ -42,7 +42,7 @@ POST /user/reg
 
 ### Получить токен для API
 ```http request
-POST /user/api_token
+POST /auth/api_token
 {
   "email": "string",
   "password": "string"
@@ -59,13 +59,13 @@ POST /user/api_token
 
 ### Запрос на восстановление пароля
 ```http request
-GET /user/recover/{email}
+GET /auth/recover/{email}
 ```
 
 ### Новый пароль
 Поменять пароль можно при помощи API_TOKEN или токена из письма [восстановления пароля]
 ```http request
-POST /user/new_pas/{token}
+POST /auth/new_pas/{token}
 {
   "password": "string",
   "confirm_password": "string"
@@ -76,5 +76,5 @@ POST /user/new_pas/{token}
 в данном случае необходимый токен из письма
 
 ```http request
-GET /user/email/{token}
+GET /auth/email/{token}
 ```

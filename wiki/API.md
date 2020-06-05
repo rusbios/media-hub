@@ -4,16 +4,16 @@
 
 Токен необходимо передавать в заголовке запроса или в параметрах запроса, примеры:
 ```http request
-GET /user/info?api_token={token}
+GET /auth/info?api_token={token}
 ```
 или
 ```http request
-POST /user/info
+POST /auth/info
 X-API-TOKEN: {token}
 ```
 или
 ```http request
-POST /user/info
+POST /auth/info
 {"api-token":"token"}
 ```
 

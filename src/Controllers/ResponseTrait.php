@@ -2,11 +2,35 @@
 
 namespace RusBios\MediaHub\Controllers;
 
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Pagination\LengthAwarePaginator;
+use RusBios\MediaHub\Models\User;
+use RusBios\MediaHub\Services\Token;
 
 trait ResponseTrait
 {
+    /**
+     * @param Request $request
+     * @return User
+     * @throws AuthenticationException
+     */
+    protected function decodeToken(Request $request): User
+    {
+        $token = $request->header('X-API-TOKEN', $request->get('api_token'));
+
+        if (!$token) {
+            throw new AuthenticationException();
+        }
+
+        if (Token::isValid($request, $token)) {
+            return Token::getUser($token);
+        }
+
+        throw new AuthenticationException('Invalid token');
+    }
+
     /**
      * @param array $data
      * @return Response
