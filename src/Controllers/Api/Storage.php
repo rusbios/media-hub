@@ -3,15 +3,22 @@
 namespace RusBios\MediaHub\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use RusBios\MediaHub\Controllers\ResponseTrait;
-use RusBios\MediaHub\Models\Storage as MStorage;
-use RusBios\MediaHub\Validations\Storage as VStorage;
-use Illuminate\Support\Facades\{Auth, Route};
+use Exception;
+use RusBios\MediaHub\Services\{ResponseTrait, Storage as SStorage};
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\{Request, Response};
 
 class Storage extends Controller
 {
     use ResponseTrait;
+
+    /** @var SStorage */
+    private $storageService;
+
+    public function __construct(SStorage $storageService)
+    {
+        $this->storageService = $storageService;
+    }
 
     /**
      * @param Request $request
@@ -19,23 +26,29 @@ class Storage extends Controller
      */
     public function store(Request $request): Response
     {
-        return $this->getPagination(MStorage::query()
-            ->where('user_id', Auth::id())
-            ->paginate());
+        try {
+            return $this->getPagination($this->storageService->list($request));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
+        }
     }
 
     /**
+     * @param Request $request
      * @param int $id
      * @return Response
      */
-    public function show(int $id): Response
+    public function show(Request $request, int $id): Response
     {
-        $ftp = MStorage::find($id);
-        if (!$ftp || $ftp->user_id !== Auth::id()) {
-            return $this->getError('no access to this item');
+        try {
+            return $this->getSuccess($this->storageService->get($request, $id));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        return $this->getSuccess(['ftp' => $ftp]);
     }
 
     /**
@@ -45,19 +58,13 @@ class Storage extends Controller
      */
     public function update(Request $request, int $id): Response
     {
-        $ftp = MStorage::find($id);
-        $data = VStorage::getValidData($request);
-        if (!$data || $ftp->user_id !== Auth::id()) {
-            return $this->getError('incorrect data');
+        try {
+            return $this->getSuccess($this->storageService->update($request, $id));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        if (!empty($data['default']) && $data['default'] === true) {
-            $this->resetDefaults();
-        }
-
-        $ftp->fill($data)->save();
-
-        return $this->getSuccess(['ftp' => $ftp]);
     }
 
     /**
@@ -66,28 +73,13 @@ class Storage extends Controller
      */
     public function create(Request $request): Response
     {
-        $data = VStorage::getValidData($request);
-        if (!$data) {
-            return $this->getError('incorrect data');
+        try {
+            return $this->getSuccess($this->storageService->create($request));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        $this->resetDefaults();
-
-        $data = [
-            'default' => true,
-            'user_id' => Auth::id(),
-        ] + $data;
-        $ftp = (new MStorage())->fill($data);
-        $ftp->save();
-
-        return $this->getSuccess(['ftp' => $ftp]);
-    }
-
-    private function resetDefaults(): void
-    {
-        MStorage::query()
-            ->where('user_id', Auth::id())
-            ->update(['default' => 0]);
     }
 
     public static function route(): void

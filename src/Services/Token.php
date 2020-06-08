@@ -8,20 +8,23 @@ use RusBios\MediaHub\Utils\Crypt;
 
 class Token
 {
-    protected const TIME_LIVE_TOKEN = 1; //week
+    protected const LIFETIME_HOURS = 24;
 
     /**
      * @param Request $request
      * @param User $user
+     * @param int|null $lifetimeHours
      * @return string
      */
-    public static function created(Request $request, User $user): string
+    public static function created(Request $request, User $user, ?int $lifetimeHours): string
     {
+        if (!$lifetimeHours) $lifetimeHours = self::LIFETIME_HOURS;
+
         return Crypt::encryptArray([
             'user_id' => $user->id,
             'email' => $user->email,
             'ip' => $request->ip(),
-            'login_ts' => (new \DateTime())->getTimestamp(),
+            'decay_ts' => (new \DateTime())->modify(sprintf('+%s hours', $lifetimeHours))->getTimestamp(),
         ]);
     }
 
@@ -37,17 +40,13 @@ class Token
         if (
             empty($data['user_id'])
             || empty($data['ip'])
-            || empty($data['login_ts'])
+            || empty($data['decay_ts'])
             || empty($data['email'])
         ) {
             return false;
         }
 
-        $timeLive = (new \DateTime())
-            ->modify('-' . self::TIME_LIVE_TOKEN . ' week')
-            ->getTimestamp();
-
-        if ($request->ip() == $data['ip'] && $timeLive < $data['login_ts']) {
+        if ($request->ip() == $data['ip'] && (new \DateTime())->getTimestamp() > $data['decay_ts']) {
             return true;
         }
 

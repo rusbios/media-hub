@@ -35,4 +35,31 @@ class Storage extends Model
         'password',
         'user_id',
     ];
+
+    /**
+     * @param bool $isShort
+     * @return array
+     */
+    public function jsonSerialize($isShort = false): array
+    {
+        if ($isShort) {
+            return [
+                'id' => $this->id,
+                'default' => $this->default,
+                'host' => $this->host,
+                'port' => $this->port,
+            ];
+        }
+
+        return [
+            'id' => $this->id,
+            'default' => $this->default,
+            'host' => $this->host,
+            'port' => $this->port,
+            'login' => $this->login,
+            'password' => $this->password,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'updated_at' => $this->created_at->format('Y-m-d H:i:s'),
+        ];
+    }
 }

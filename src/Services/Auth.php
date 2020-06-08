@@ -3,17 +3,11 @@
 namespace RusBios\MediaHub\Services;
 
 use Exception;
-use Illuminate\Auth\AuthenticationException;
-use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth as FAuth;
+use Illuminate\Auth\{AuthenticationException, Request, Response};
 use Illuminate\Support\Facades\Hash;
-use RusBios\MediaHub\Controllers\ResponseTrait;
 use RusBios\MediaHub\Models\User;
 use RusBios\MediaHub\Utils\MbString;
-use RusBios\MediaHub\Validations\UserLogIn;
-use RusBios\MediaHub\Validations\UserNewPassword;
-use RusBios\MediaHub\Validations\UserReg;
+use RusBios\MediaHub\Validations\{UserLogIn, UserNewPassword, UserReg};
 
 class Auth
 {
@@ -30,6 +24,7 @@ class Auth
 
         $data['password'] = Hash::make($data['password']);
         if ($data) {
+            /** @var User $user */
             $user = (new User())->fill($data);
 
             if (UserReg::isDuplicate($user)) {
@@ -37,8 +32,6 @@ class Auth
             }
 
             $user->save();
-
-            FAuth::login($user, true);
 
             return ['user' => $user->jsonSerialize(true)];
         }

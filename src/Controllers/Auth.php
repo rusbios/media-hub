@@ -5,7 +5,7 @@ namespace RusBios\MediaHub\Controllers;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
-use RusBios\MediaHub\Services\Auth as SAuth;
+use RusBios\MediaHub\Services\{Auth as SAuth, ResponseTrait};
 use Illuminate\Http\{Request, Response};
 use Illuminate\Support\Facades\Route;
 
@@ -73,7 +73,7 @@ class Auth extends Controller
         try {
             return $this->getSuccess($this->authService->newPass($request));
         } catch (AuthenticationException $e) {
-            return $this->getError($e->getMessage(), 401);
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
             return $this->getError($e->getMessage());
         }
@@ -88,7 +88,7 @@ class Auth extends Controller
         try {
             $user = $this->decodeToken($request);
         } catch (AuthenticationException $e) {
-            return $this->getError($e->getMessage(), 401);
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         }
 
         return $this->getSuccess(['user' => $user->jsonSerialize(true)]);

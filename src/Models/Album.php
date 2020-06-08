@@ -54,4 +54,27 @@ class Album extends Model
     {
         return $this->hasOne(User::class, 'user_id', 'id');
     }
+
+    /**
+     * @param bool $isShort
+     * @return array
+     */
+    public function jsonSerialize($isShort = false): array
+    {
+        if ($isShort) {
+            return [
+                'id' => $this->id,
+                'name' => $this->name,
+                'url' => $this->url,
+            ];
+        }
+
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'url' => $this->url,
+            'access' => $this->access,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+        ];
+    }
 }

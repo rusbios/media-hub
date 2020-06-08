@@ -3,17 +3,28 @@
 namespace RusBios\MediaHub\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Models\{File, User};
-use RusBios\MediaHub\Controllers\ResponseTrait;
-use RusBios\MediaHub\Utils\Files as UFiles;
+use RusBios\MediaHub\Services\ResponseTrait;
+use RusBios\MediaHub\Services\File as SFile;
 use Exception;
-use Illuminate\Support\Facades\{Auth, Config, Route, Storage};
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Http\{Request, Response};
-use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Files extends Controller
 {
     use ResponseTrait;
+
+    /** @var SFile */
+    private $fileService;
+
+    /**
+     * Files constructor.
+     * @param SFile $fileService
+     */
+    public function __construct(SFile $fileService)
+    {
+        $this->fileService = $fileService;
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -23,26 +34,31 @@ class Files extends Controller
      */
     public function store(Request $request): Response
     {
-        return $this->getPagination(File::query()
-            ->where('user_id', Auth::id())
-            ->orderByDesc('created_at')
-            ->paginate());
+        try {
+            return $this->getPagination($this->fileService->list($request));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
+        }
     }
 
     /**
      * Display the specified resource.
      *
+     * @param Request $request
      * @param int $id
      * @return Response
      */
-    public function show(int $id)
+    public function show(Request $request, int $id)
     {
-        $file = File::find($id);
-        if (!$file || $file->user_id !== Auth::id()) {
-            return $this->getError('no access to this item');
+        try {
+            return $this->getSuccess($this->fileService->get($request, $id));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        return $this->getSuccess(['file' => $file]);
     }
 
     /**
@@ -51,71 +67,47 @@ class Files extends Controller
      */
     public function create(Request $request): Response
     {
-        $user = User::find(Auth::id());
-
         try {
-            $files = UFiles::createFile(
-                $request->allFiles(),
-                $user,
-                $request->getClientIp(),
-                $request->get('ftp_id', $user->getDefaultFTP()->id)
-            );
+            return $this->getSuccess($this->fileService->create($request));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
             return $this->getError($e->getMessage());
         }
-
-        return $this->getSuccess(['file' => $files]);
     }
 
     /**
+     * @param Request $request
      * @param string $guid
      * @return StreamedResponse|Response
      */
-    public function download(string $guid)
+    public function download(Request $request, string $guid)
     {
-        /** @var File $file */
-        $file = File::query()
-            ->where('guid', $guid)
-            ->first();
-
-        $usersId = $file->getUserAccess();
-        $usersId[] = $file->user_id;
-
-        if (!in_array(Auth::id(), $usersId)) {
-            return $this->getError('insufficient access rights', Response::HTTP_FORBIDDEN);
+        try {
+            return $this->fileService->download($request, $guid);
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
+        } catch (Exception $e) {
+            return $this->getError($e->getMessage());
         }
-
-        $ftp = $file->getFtp();
-        Config::set('filesystems.disks.ftp.host', $ftp->host);
-        Config::set('filesystems.disks.ftp.username', $ftp->login);
-        Config::set('filesystems.disks.ftp.password', $ftp->password);
-        Config::set('filesystems.disks.ftp.port', $ftp->port);
-        Config::set('filesystems.disks.ftp.ssl', false);
-
-        return response()->streamDownload(function () use ($file) {
-                echo Storage::disk($file->status === File::STATUS_READY ? 'ftp' : 'local')->get($file->path . $file->guid);
-            },
-            $file->name,
-            ['Content-Type' => $file->mime_type]
-        );
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param File $file
+     * @param Request $request
+     * @param string $guid
      * @return Response
      */
-    public function destroy(File $file): Response
+    public function destroy(Request $request, string $guid): Response
     {
         try {
-            $file->delete();
-            $file->save();
+            return $this->getSuccess($this->fileService->destroy($request, $guid));
+        } catch (AuthenticationException $e) {
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
             return $this->getError($e->getMessage());
         }
-
-        return $this->getSuccess([]);
     }
 
     public static function route(): void

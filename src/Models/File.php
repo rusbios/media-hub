@@ -54,6 +54,18 @@ class File extends Model
     ];
 
     /**
+     * @param string $guid
+     * @return File
+     */
+    public static function getByGuid(string $guid): self
+    {
+        return File::query()
+            ->where('guid', $guid)
+            ->whereNotNull('deleted_at')
+            ->first();
+    }
+
+    /**
      * @return int[]
      */
     public function getUserAccess(): array
@@ -70,5 +82,34 @@ class File extends Model
     public function getStorage()
     {
         return Storage::find($this->storage_id);
+    }
+
+    /**
+     * @param bool $isShort
+     * @return array
+     */
+    public function jsonSerialize($isShort = false): array
+    {
+        if ($isShort) {
+            return [
+                'guid' => $this->guid,
+                'name' => $this->guid,
+                'preview' => $this->guid,
+                'size' => $this->size,
+            ];
+        }
+
+        return [
+            'id' => $this->id,
+            'guid' => $this->guid,
+            'hash' => $this->hash,
+            'storage_id' => $this->storage_id,
+            'name' => $this->name,
+            'mime_type' => $this->mime_type,
+            'preview' => $this->preview,
+            'size' => $this->size,
+            'status' => $this->status,
+            'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+        ];
     }
 }
