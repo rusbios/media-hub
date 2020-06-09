@@ -1,11 +1,10 @@
 <?php
 
-use MediaHub\Models\Album;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAlbumsTable extends Migration
+class CreateStorageTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,15 +13,15 @@ class CreateAlbumsTable extends Migration
      */
     public function up()
     {
-        Schema::create('albums', function (Blueprint $table) {
+        Schema::create('storage', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->boolean('default')->default(0);
             $table->bigInteger('user_id')->index();
+            $table->boolean('default')->default(0);
+            $table->string('host');
+            $table->smallInteger('port');
+            $table->string('login');
+            $table->string('password');
             $table->timestamps();
-            $table->softDeletes();
-            $table->enum('access', Album::ACCESSES)->default(Album::ACCESS_PRIVATE);
-            $table->string('url')->index();
         });
     }
 
@@ -33,6 +32,6 @@ class CreateAlbumsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('albums');
+        Schema::dropIfExists('storage');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace RusBios\MediaHub\Validations;
+namespace MediaHub\Validations;
 
 use Illuminate\Http\Request;
 
@@ -14,7 +14,7 @@ class UserLogIn implements ValidInterface
         return !empty($data['email']) && !empty($data['password']);
     }
 
-    public static function getValidData(Request $request): ?array
+    public static function getValidData(Request $request)
     {
         return static::isValid($request) ? $request->all(['password', 'email']) : null;
     }

@@ -1,10 +1,10 @@
 <?php
 
-namespace RusBios\MediaHub\Services;
+namespace MediaHub\Services;
 
 use Exception;
-use RusBios\MediaHub\Models\File as MFile;
-use RusBios\MediaHub\Utils\Files as UFiles;
+use MediaHub\Models\File as MFile;
+use MediaHub\Utils\Files as UFiles;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;

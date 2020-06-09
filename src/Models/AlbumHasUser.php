@@ -1,6 +1,6 @@
 <?php
 
-namespace RusBios\MediaHub\Models;
+namespace MediaHub\Models;
 
 use Illuminate\Database\Eloquent\Model;
 

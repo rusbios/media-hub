@@ -1,11 +1,11 @@
 <?php
 
-namespace RusBios\MediaHub\Services;
+namespace MediaHub\Services;
 
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\{Request, Response};
 use Illuminate\Pagination\LengthAwarePaginator;
-use RusBios\MediaHub\Models\User;
+use MediaHub\Models\User;
 
 trait ResponseTrait
 {

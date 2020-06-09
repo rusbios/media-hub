@@ -1,14 +1,15 @@
 <?php
 
-namespace RusBios\MediaHub\Controllers\Api;
+namespace MediaHub\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use RusBios\MediaHub\Services\ResponseTrait;
-use RusBios\MediaHub\Services\File as SFile;
+use MediaHub\Services\ResponseTrait;
+use MediaHub\Services\File as SFile;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\{Request, Response};
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Files extends Controller
 {
@@ -110,15 +111,15 @@ class Files extends Controller
         }
     }
 
-    public static function route(): void
+    public static function route()
     {
-        Route::group(['namespace' => 'Api', 'prefix' => 'api/files'], function () {
+        Route::group(['namespace' => 'MediaHub\Controllers\Api', 'prefix' => 'api/files'], function () {
             Route::get('/', 'Files@store')->name('file-store');
             Route::get('/{id}', 'Files@show')->name('file-show');
             Route::post('/', 'Files@create')->name('file-create');
             Route::delete('/{id}', 'Files@destroy')->name('file-destroy');
         });
 
-        Route::get('/file/{guid}', 'Api\Files@download')->name('file-download');
+        Route::get('/file/{guid}', 'MediaHub\Controllers\Api\Files@download')->name('file-download');
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace RusBios\MediaHub\Models;
+namespace MediaHub\Models;
 
 use DateTime;
 use Illuminate\Database\Eloquent\{Model, Relations\HasOne, SoftDeletes};

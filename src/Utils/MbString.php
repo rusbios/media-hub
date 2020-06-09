@@ -1,5 +1,5 @@
 <?php
-namespace RusBios\MediaHub\Utils;
+namespace MediaHub\Utils;
 
 use Exception;
 use SimpleXMLElement;

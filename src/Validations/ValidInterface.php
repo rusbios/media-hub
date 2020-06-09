@@ -1,6 +1,6 @@
 <?php
 
-namespace RusBios\MediaHub\Validations;
+namespace MediaHub\Validations;
 
 use Illuminate\Http\Request;
 
@@ -16,5 +16,5 @@ interface ValidInterface
      * @param Request $request
      * @return array|null
      */
-    public static function getValidData(Request $request): ?array;
+    public static function getValidData(Request $request);
 }

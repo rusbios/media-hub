@@ -1,8 +1,8 @@
 <?php
 
-namespace RusBios\MediaHub\Utils;
+namespace MediaHub\Utils;
 
-use App\Models\{File, User};
+use MediaHub\Models\{File, User};
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\{Config, Storage};

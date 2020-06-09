@@ -1,13 +1,14 @@
 <?php
 
-namespace RusBios\MediaHub\Services;
+namespace MediaHub\Services;
 
 use Exception;
-use Illuminate\Auth\{AuthenticationException, Request, Response};
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use RusBios\MediaHub\Models\User;
-use RusBios\MediaHub\Utils\MbString;
-use RusBios\MediaHub\Validations\{UserLogIn, UserNewPassword, UserReg};
+use MediaHub\Models\User;
+use MediaHub\Utils\MbString;
+use MediaHub\Validations\{UserLogIn, UserNewPassword, UserReg};
 
 class Auth
 {

@@ -1,9 +1,9 @@
 <?php
 
-namespace RusBios\MediaHub\Validations;
+namespace MediaHub\Validations;
 
+use MediaHub\Models\User;
 use Illuminate\Database\Eloquent\Model;
-use RusBios\MediaHub\Models\User;
 use Illuminate\Http\Request;
 
 class UserReg implements ValidInterface
@@ -27,7 +27,7 @@ class UserReg implements ValidInterface
      * @param Request $request
      * @return array|null
      */
-    public static function getValidData(Request $request): ?array
+    public static function getValidData(Request $request)
     {
         return static::isValid($request) ? $request->all(['name', 'password', 'email']) : null;
     }

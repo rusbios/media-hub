@@ -1,10 +1,10 @@
 <?php
 
-namespace RusBios\MediaHub\Services;
+namespace MediaHub\Services;
 
 use Illuminate\Http\Request;
-use RusBios\MediaHub\Models\User;
-use RusBios\MediaHub\Utils\Crypt;
+use MediaHub\Models\User;
+use MediaHub\Utils\Crypt;
 
 class Token
 {

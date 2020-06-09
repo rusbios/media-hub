@@ -1,10 +1,11 @@
 <?php
 
-namespace RusBios\MediaHub\Services;
+namespace MediaHub\Services;
 
 use Exception;
-use RusBios\MediaHub\Models\Storage as MStorage;
-use RusBios\MediaHub\Validations\Storage as VStorage;
+use MediaHub\Models\Storage as MStorage;
+use MediaHub\Validations\Storage as VStorage;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 

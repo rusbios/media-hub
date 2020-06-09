@@ -1,11 +1,11 @@
 <?php
 
-namespace RusBios\MediaHub\Controllers;
+namespace MediaHub\Controllers;
 
 use App\Http\Controllers\Controller;
 use Exception;
+use MediaHub\Services\{Auth as SAuth, ResponseTrait};
 use Illuminate\Auth\AuthenticationException;
-use RusBios\MediaHub\Services\{Auth as SAuth, ResponseTrait};
 use Illuminate\Http\{Request, Response};
 use Illuminate\Support\Facades\Route;
 
@@ -107,9 +107,9 @@ class Auth extends Controller
         }
     }
 
-    public static function route(): void
+    public static function route()
     {
-        Route::prefix('auth')->group(function () {
+        Route::prefix('auth')->namespace('MediaHub\Controllers')->group(function () {
             Route::get('info', 'Auth@info')->name('auth_info');
             Route::post('api_token', 'Auth@info')->name('auth_api_token');
             Route::post('reg', 'Auth@registration')->name('auth_reg');

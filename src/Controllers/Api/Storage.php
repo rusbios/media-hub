@@ -1,10 +1,11 @@
 <?php
 
-namespace RusBios\MediaHub\Controllers\Api;
+namespace MediaHub\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Exception;
-use RusBios\MediaHub\Services\{ResponseTrait, Storage as SStorage};
+use Illuminate\Auth\AuthenticationException;
+use MediaHub\Services\{ResponseTrait, Storage as SStorage};
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\{Request, Response};
 
@@ -82,13 +83,13 @@ class Storage extends Controller
         }
     }
 
-    public static function route(): void
+    public static function route()
     {
-        Route::group(['namespace' => 'Api', 'prefix' => 'api/ftps'], function () {
-            Route::get('/', 'Ftps@store')->name('ftp-store');
-            Route::get('/{id}', 'Ftps@show')->name('ftp-show');
-            Route::post('/', 'Ftps@create')->name('ftp-create');
-            Route::put('/{id}', 'Ftps@update')->name('ftp-update');
+        Route::group(['namespace' => 'MediaHub\Controllers\Api', 'prefix' => 'api/ftps'], function () {
+            Route::get('/', 'Storage@store')->name('ftp-store');
+            Route::get('/{id}', 'Storage@show')->name('ftp-show');
+            Route::post('/', 'Storage@create')->name('ftp-create');
+            Route::put('/{id}', 'Storage@update')->name('ftp-update');
         });
     }
 }

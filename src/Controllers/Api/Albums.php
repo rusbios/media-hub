@@ -1,9 +1,9 @@
 <?php
 
-namespace RusBios\MediaHub\Controllers\Api;
+namespace MediaHub\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use RusBios\MediaHub\Services\{Album as SAlbum, ResponseTrait};
+use MediaHub\Services\{Album as SAlbum, ResponseTrait};
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Route;
@@ -92,9 +92,9 @@ class Albums extends Controller
         }
     }
 
-    public static function route(): void
+    public static function route()
     {
-        Route::group(['namespace' => 'Api', 'prefix' => 'api/albums'], function () {
+        Route::group(['namespace' => 'MediaHub\Controllers\Api', 'prefix' => 'api/albums'], function () {
             Route::get('/', 'Albums@store')->name('album-store');
             Route::get('/{id}', 'Albums@show')->name('album-show');
             Route::post('/', 'Albums@create')->name('album-create');

@@ -1,6 +1,6 @@
 <?php
 
-namespace RusBios\MediaHub\Utils;
+namespace MediaHub\Utils;
 
 use Illuminate\Support\Facades\Crypt as LCrypt;
 

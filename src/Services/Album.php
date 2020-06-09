@@ -1,11 +1,12 @@
 <?php
 
-namespace RusBios\MediaHub\Services;
+namespace MediaHub\Services;
 
 use Exception;
-use RusBios\MediaHub\Models\{Album as MAlbum, AlbumHasUser};
-use RusBios\MediaHub\Utils\MbString;
-use RusBios\MediaHub\Validations\Album as VAlbum;
+use MediaHub\Models\{Album as MAlbum, AlbumHasUser};
+use MediaHub\Utils\MbString;
+use MediaHub\Validations\Album as VAlbum;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 

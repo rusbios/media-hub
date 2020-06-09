@@ -1,6 +1,6 @@
 <?php
 
-namespace RusBios\MediaHub\Models;
+namespace MediaHub\Models;
 
 use DateTime;
 
@@ -16,7 +16,7 @@ use DateTime;
  * @property DateTime $created_at
  * @property DateTime $updated_at
  */
-class User extends \App\Models\User
+class User extends \App\User
 {
     /**
      * @var array

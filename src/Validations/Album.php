@@ -1,6 +1,6 @@
 <?php
 
-namespace RusBios\MediaHub\Validations;
+namespace MediaHub\Validations;
 
 use Illuminate\Http\Request;
 
@@ -13,7 +13,11 @@ class Album implements ValidInterface
         return !empty($data['name']);
     }
 
-    public static function getValidData(Request $request): ?array
+    /**
+     * @param Request $request
+     * @return array|null
+     */
+    public static function getValidData(Request $request)
     {
         return static::isValid($request) ? $request->all(['name', 'access']) : null;
     }

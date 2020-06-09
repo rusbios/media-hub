@@ -1,6 +1,6 @@
 <?php
 
-namespace RusBios\MediaHub\Validations;
+namespace MediaHub\Validations;
 
 use Illuminate\Http\Request;
 
@@ -15,7 +15,7 @@ class UserNewPassword implements ValidInterface
             && $data['password'] === $data['confirm_password'];
     }
 
-    public static function getValidData(Request $request): ?array
+    public static function getValidData(Request $request)
     {
         return static::isValid($request) ? $request->all(['password']) : null;
     }

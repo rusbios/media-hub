@@ -1,6 +1,6 @@
 <?php
 
-use RusBios\MediaHub\Controllers;
+use MediaHub\Controllers;
 
 Controllers\Auth::route();
 Controllers\Api\Files::route();

@@ -15,13 +15,13 @@
   },
   "autoload": {
     "psr-4": {
-      "RusBios\\MediaHub\\": "src/"
+      "MediaHub\\": "src/"
     }
   },
   "extra": {
     "laravel": {
       "providers": [
-        "RusBios\\MediaHub\\ServiceProvider"
+        "MediaHub\\ServiceProvider"
       ]
     }
   }
