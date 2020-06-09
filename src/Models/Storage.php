@@ -40,7 +40,7 @@ class Storage extends Model
      * @param bool $isShort
      * @return array
      */
-    public function jsonSerialize($isShort = false): array
+    public function jsonSerialize($isShort = true): array
     {
         if ($isShort) {
             return [

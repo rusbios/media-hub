@@ -104,7 +104,7 @@ class Album
                 'access' => MAlbum::ACCESS_PRIVATE,
             ] + $data;
 
-        if (Album::query()
+        if (MAlbum::query()
             ->where('url', $data['url'])
             ->where('user_id', $data['user_id'])
             ->first()) {
