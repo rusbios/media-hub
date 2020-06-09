@@ -56,6 +56,15 @@ class Album extends Model
     }
 
     /**
+     * @return int[]
+     */
+    public function getAccessUsers(): array
+    {
+        return $this->hasMany(AlbumHasUser::class, 'id', 'album_id')
+            ->pluck('user_id')->all();
+    }
+
+    /**
      * @param bool $isShort
      * @return array
      */
@@ -75,6 +84,7 @@ class Album extends Model
             'url' => $this->url,
             'access' => $this->access,
             'created_at' => $this->created_at->format('Y-m-d H:i:s'),
+            'access_users' => $this->getAccessUsers(),
         ];
     }
 }
