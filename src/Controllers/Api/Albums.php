@@ -86,9 +86,9 @@ class Albums extends Controller
         try {
             return $this->getSuccess($this->albumService->create($request));
         } catch (AuthenticationException $e) {
-            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
+            return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN, $request);
         } catch (Exception $e) {
-            return $this->getError($e->getMessage());
+            return $this->getError($e->getMessage(), null, $request);
         }
     }
 

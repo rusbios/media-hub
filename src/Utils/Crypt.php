@@ -2,7 +2,7 @@
 
 namespace MediaHub\Utils;
 
-use Illuminate\Support\Facades\Crypt as LCrypt;
+use Illuminate\Support\Facades\Crypt as FCrypt;
 
 class Crypt
 {
@@ -12,7 +12,7 @@ class Crypt
      */
     public static function encryptString(string $value): string
     {
-        return LCrypt::decryptString($value);
+        return FCrypt::encryptString($value);
     }
 
     /**
@@ -21,7 +21,7 @@ class Crypt
      */
     public static function decryptString(string $value): string
     {
-        return LCrypt::decryptString($value);
+        return FCrypt::decryptString($value);
     }
 
     /**

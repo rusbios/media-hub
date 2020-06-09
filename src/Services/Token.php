@@ -16,7 +16,7 @@ class Token
      * @param int|null $lifetimeHours
      * @return string
      */
-    public static function created(Request $request, User $user, ?int $lifetimeHours): string
+    public static function created(Request $request, User $user, int $lifetimeHours = null): string
     {
         if (!$lifetimeHours) $lifetimeHours = self::LIFETIME_HOURS;
 
@@ -37,16 +37,15 @@ class Token
     {
         $data = Crypt::decryptArray($token);
 
-        if (
-            empty($data['user_id'])
+        if (empty($data['user_id'])
             || empty($data['ip'])
             || empty($data['decay_ts'])
-            || empty($data['email'])
-        ) {
+            || empty($data['email'])) {
             return false;
         }
 
-        if ($request->ip() == $data['ip'] && (new \DateTime())->getTimestamp() > $data['decay_ts']) {
+        if ($request->ip() == $data['ip']
+            && (new \DateTime())->getTimestamp() < $data['decay_ts']) {
             return true;
         }
 
@@ -65,6 +64,12 @@ class Token
             return null;
         }
 
-        return User::find($data['user_id']);
+        $user = User::find($data['user_id']);
+
+        if ($user && $user->email == $data['email']) {
+            return $user;
+        }
+
+        return null;
     }
 }

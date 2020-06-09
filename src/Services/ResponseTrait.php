@@ -3,6 +3,7 @@
 namespace MediaHub\Services;
 
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Http\{Request, Response};
 use Illuminate\Pagination\LengthAwarePaginator;
 use MediaHub\Models\User;
@@ -41,10 +42,18 @@ trait ResponseTrait
     /**
      * @param string $message
      * @param int $code
+     * @param Request|null $request
      * @return Response
      */
-    protected function getError(string $message, int $code = Response::HTTP_BAD_REQUEST): Response
+    protected function getError(string $message, int $code = Response::HTTP_BAD_REQUEST, Request $request = null): Response
     {
+        if ($request) {
+            $context = $request->all();
+            $context['response_code'] = $code;
+            $context['request_url'] = $request->url();
+            Log::notice($message, $context);
+        }
+
         return new Response([
             'success' => false,
             'error' => $message,
