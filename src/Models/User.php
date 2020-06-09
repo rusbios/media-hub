@@ -58,9 +58,22 @@ class User extends \App\User
      */
     public function getDefaultAlbum(): Album
     {
-        return $this->hasMany(Album::class, 'user_id', 'id')
+        $album = $this->hasMany(Album::class, 'user_id', 'id')
             ->where('default', 1)
             ->first();
+
+        if (!$album) {
+            $album = new Album();
+            $album->fill([
+                'user_id' => $this->id,
+                'url' => 'default',
+                'access' => Album::ACCESS_PRIVATE,
+                'name' => 'default',
+            ]);
+            $album->save();
+        }
+
+        return $album;
     }
 
     /**

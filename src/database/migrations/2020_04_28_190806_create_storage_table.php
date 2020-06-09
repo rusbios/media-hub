@@ -18,6 +18,7 @@ class CreateStorageTable extends Migration
             $table->bigInteger('user_id')->index();
             $table->boolean('default')->default(0);
             $table->string('host');
+            $table->string('type', 50);
             $table->smallInteger('port');
             $table->string('login');
             $table->string('password');

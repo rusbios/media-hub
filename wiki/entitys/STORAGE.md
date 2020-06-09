@@ -18,7 +18,8 @@ GET /api/storage
       "id": 1,
       "type": "ftp",
       "default": "bool",
-      "host": "string"
+      "host": "string",
+      "port": 21
     }
   ]
 }

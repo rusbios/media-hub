@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $user_id
  * @property string $host
+ * @property string $type
  * @property int $port
  * @property string $login
  * @property string $password

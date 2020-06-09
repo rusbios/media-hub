@@ -3,11 +3,13 @@
 namespace MediaHub\Services;
 
 use Exception;
+use Illuminate\Support\Facades\Config;
 use MediaHub\Models\File as MFile;
 use MediaHub\Utils\Files as UFiles;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class File
 {
@@ -65,10 +67,11 @@ class File
         $user = $this->decodeToken($request);
 
         $files = UFiles::createFile(
-            $request->allFiles(),
+            $request->file('files'),
             $user,
             $request->getClientIp(),
-            $request->get('ftp_id', $user->getDefaultStorage()->id)
+            $request->get('storage_id', $user->getDefaultStorage()->id),
+            $request->get('album_id', $user->getDefaultAlbum()->id)
         );
 
         return ['file' => $files];
@@ -95,15 +98,15 @@ class File
             throw new Exception('insufficient access rights');
         }
 
-        $ftp = $file->getFtp();
-        Config::set('filesystems.disks.ftp.host', $ftp->host);
-        Config::set('filesystems.disks.ftp.username', $ftp->login);
-        Config::set('filesystems.disks.ftp.password', $ftp->password);
-        Config::set('filesystems.disks.ftp.port', $ftp->port);
+        $storage = $file->getStorage();
+        Config::set('filesystems.disks.ftp.host', $storage->host);
+        Config::set('filesystems.disks.ftp.username', $storage->login);
+        Config::set('filesystems.disks.ftp.password', $storage->password);
+        Config::set('filesystems.disks.ftp.port', $storage->port);
         Config::set('filesystems.disks.ftp.ssl', false);
 
         return response()->streamDownload(function () use ($file) {
-            return Storage::disk($file->status === File::STATUS_READY ? 'ftp' : 'local')->get($file->path . $file->guid);
+            return Storage::disk($file->status === MFile::STATUS_READY ? 'ftp' : 'local')->get($file->path . $file->guid);
         },
             $file->name,
             ['Content-Type' => $file->mime_type]
@@ -135,6 +138,6 @@ class File
         $file->save();
 
 
-        return $this->getSuccess([]);
+        return [];
     }
 }

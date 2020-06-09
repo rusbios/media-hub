@@ -2,7 +2,7 @@
 
 namespace MediaHub\Utils;
 
-use MediaHub\Models\{File, User};
+use MediaHub\Models\{AlbumHasFies, File, User};
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\{Config, Storage};
@@ -13,14 +13,19 @@ class Files
      * @param UploadedFile[] $upFiles
      * @param User $user
      * @param string|null $ip
-     * @param int|null $ftp_id
+     * @param int|null $storage_id
+     * @param int|null $album_id
      * @return File[]
      * @throws Exception
      */
-    public static function createFile(array $upFiles, User $user, ?string $ip, ?int $ftp_id): iterable
+    public static function createFile(array $upFiles, User $user, ?string $ip, ?int $storage_id, ?int $album_id): iterable
     {
-        if (!$ftp_id) {
-            $ftp_id = User::find($user->id)->getDefaultFTP()->id;
+        if (!$storage_id) {
+            $storage_id = $user->getDefaultStorage()->id;
+        }
+
+        if (!$album_id) {
+            $album_id = $user->getDefaultAlbum()->id;
         }
 
         $files = [];
@@ -30,7 +35,7 @@ class Files
             $file->fill([
                 'guid' => MbString::makeGUID($ip),
                 'hash' => md5_file($upFile->path()),
-                'ftp_id' => $ftp_id,
+                'storage_id' => $storage_id,
                 'name' => $upFile->getClientOriginalName(),
                 'mime_type' => $upFile->getMimeType(),
                 'size' => $upFile->getSize(),
@@ -50,6 +55,11 @@ class Files
 
             $file->save();
 
+            (new AlbumHasFies())->fill([
+                'file_id' => $file->id,
+                'album_id' => $album_id,
+            ])->save();
+
             $files[] = $file;
         }
 
@@ -67,11 +77,18 @@ class Files
 
         $file->preview = self::createPreview($file);
 
-        $ftp = $file->getFtp();
-        Config::set('filesystems.disks.ftp.host', $ftp->host);
-        Config::set('filesystems.disks.ftp.username', $ftp->login);
-        Config::set('filesystems.disks.ftp.password', $ftp->password);
-        Config::set('filesystems.disks.ftp.port', $ftp->port);
+        $storage = $file->getStorage();
+
+        if ($storage->type != 'ftp') {
+            $file->status = File::STATUS_ERROR;
+            $file->save();
+            return;
+        }
+
+        Config::set('filesystems.disks.ftp.host', $storage->host);
+        Config::set('filesystems.disks.ftp.username', $storage->login);
+        Config::set('filesystems.disks.ftp.password', $storage->password);
+        Config::set('filesystems.disks.ftp.port', $storage->port);
         Config::set('filesystems.disks.ftp.ssl', false);
 
         try {
