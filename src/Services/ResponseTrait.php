@@ -47,11 +47,11 @@ trait ResponseTrait
      */
     protected function getError(string $message, int $code = Response::HTTP_BAD_REQUEST, Request $request = null): Response
     {
-        if ($request) {
+        if ($request && config('app.debug')) {
             $context = $request->all();
             $context['response_code'] = $code;
             $context['request_url'] = $request->url();
-            Log::notice($message, $context);
+            Log::info($message, $context);
         }
 
         return new Response([

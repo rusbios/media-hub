@@ -40,7 +40,7 @@ class Files extends Controller
         } catch (AuthenticationException $e) {
             return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
-            return $this->getError($e->getMessage());
+            return $this->getError($e->getMessage(), null, $request);
         }
     }
 
@@ -58,7 +58,7 @@ class Files extends Controller
         } catch (AuthenticationException $e) {
             return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
-            return $this->getError($e->getMessage());
+            return $this->getError($e->getMessage(), null, $request);
         }
     }
 
@@ -73,7 +73,7 @@ class Files extends Controller
         } catch (AuthenticationException $e) {
             return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
-            return $this->getError($e->getMessage());
+            return $this->getError($e->getMessage(), null, $request);
         }
     }
 
@@ -89,7 +89,7 @@ class Files extends Controller
         } catch (AuthenticationException $e) {
             return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
-            return $this->getError($e->getMessage());
+            return $this->getError($e->getMessage(), null, $request);
         }
     }
 
@@ -107,7 +107,7 @@ class Files extends Controller
         } catch (AuthenticationException $e) {
             return $this->getError($e->getMessage(), Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
-            return $this->getError($e->getMessage());
+            return $this->getError($e->getMessage(), null, $request);
         }
     }
 
