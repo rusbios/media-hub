@@ -90,10 +90,10 @@ class Storage extends Controller
     public static function route()
     {
         Route::group(['namespace' => 'MediaHub\Controllers\Api', 'prefix' => 'api/ftps'], function () {
-            Route::get('/', 'Storage@store')->name('ftp-store');
-            Route::get('/{id}', 'Storage@show')->name('ftp-show');
-            Route::post('/', 'Storage@create')->name('ftp-create');
-            Route::put('/{id}', 'Storage@update')->name('ftp-update');
+            Route::get('/', 'Storage@store')->name('api-storage-store');
+            Route::get('/{id}', 'Storage@show')->name('api-storage-show');
+            Route::post('/', 'Storage@create')->name('api-storage-create');
+            Route::put('/{id}', 'Storage@update')->name('api-storage-update');
         });
     }
 }

@@ -113,10 +113,10 @@ class Files extends Controller
     public static function route()
     {
         Route::group(['namespace' => 'MediaHub\Controllers\Api', 'prefix' => 'api/files'], function () {
-            Route::get('/', 'Files@store')->name('file-store');
-            Route::get('/{id}', 'Files@show')->name('file-show');
-            Route::post('/', 'Files@create')->name('file-create');
-            Route::delete('/{id}', 'Files@destroy')->name('file-destroy');
+            Route::get('/', 'Files@store')->name('api-file-store');
+            Route::get('/{id}', 'Files@show')->name('api-file-show');
+            Route::post('/', 'Files@create')->name('api-file-create');
+            Route::delete('/{id}', 'Files@destroy')->name('api-file-destroy');
         });
 
         Route::get('/file/{guid}', 'MediaHub\Controllers\Api\Files@download')->name('file-download');

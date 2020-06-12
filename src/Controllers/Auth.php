@@ -110,12 +110,12 @@ class Auth extends Controller
     public static function route()
     {
         Route::prefix('auth')->namespace('MediaHub\Controllers')->group(function () {
-            Route::match(['GET', 'POST'], 'info', 'Auth@info')->name('auth_info');
-            Route::post('api_token', 'Auth@getApiToken')->name('auth_api_token');
-            Route::post('reg', 'Auth@registration')->name('auth_reg');
-            Route::get('recover/{email}', 'Auth@recover')->name('auth_recover');
-            Route::post('new_pas/{token}', 'Auth@newPass')->name('auth_new_pass');
-            Route::get('confirm', 'Auth@confirmEmail')->name('confirm_email');
+            Route::match(['GET', 'POST'], 'info', 'Auth@info')->name('api-auth-info');
+            Route::post('api_token', 'Auth@getApiToken')->name('api-auth-token');
+            Route::post('reg', 'Auth@registration')->name('api-auth-reg');
+            Route::get('recover/{email}', 'Auth@recover')->name('api-auth-recover');
+            Route::post('new_pas/{token}', 'Auth@newPass')->name('api-auth-new-pass');
+            Route::get('confirm', 'Auth@confirmEmail')->name('api-confirm-email');
         });
     }
 }

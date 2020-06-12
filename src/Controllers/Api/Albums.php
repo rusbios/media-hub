@@ -96,10 +96,10 @@ class Albums extends Controller
     public static function route()
     {
         Route::group(['namespace' => 'MediaHub\Controllers\Api', 'prefix' => 'api/albums'], function () {
-            Route::get('/', 'Albums@store')->name('album-store');
-            Route::get('/{id}', 'Albums@show')->name('album-show');
-            Route::post('/', 'Albums@create')->name('album-create');
-            Route::put('/{id}', 'Albums@update')->name('album-update');
+            Route::get('/', 'Albums@store')->name('api-album-store');
+            Route::get('/{id}', 'Albums@show')->name('api-album-show');
+            Route::post('/', 'Albums@create')->name('api-album-create');
+            Route::put('/{id}', 'Albums@update')->name('api-album-update');
         });
     }
 }
