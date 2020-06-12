@@ -18,6 +18,8 @@ use DateTime;
  */
 class UserModels extends \App\User
 {
+    protected $table = 'users';
+
     /**
      * @var array
      */

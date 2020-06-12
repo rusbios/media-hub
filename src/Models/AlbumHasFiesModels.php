@@ -15,6 +15,8 @@ class AlbumHasFiesModels extends Model
     public const CREATED_AT = null;
     public const UPDATED_AT = null;
 
+    protected $table = 'album_has_fies';
+
     protected $fillable = [
         'file_id',
         'album_id',

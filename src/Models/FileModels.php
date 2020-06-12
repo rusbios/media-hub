@@ -42,6 +42,8 @@ class FileModels extends Model
         self::STATUS_READY,
     ];
 
+    protected $table = 'files';
+
     protected $fillable = [
         'guid',
         'hash',
@@ -83,7 +85,7 @@ class FileModels extends Model
      * @param int|null $prePage
      * @return LengthAwarePaginator
      */
-    public function getStory(int $userId, int $page = 1, int $prePage = null): LengthAwarePaginator
+    public static function getStory(int $userId, int $page = 1, int $prePage = null): LengthAwarePaginator
     {
         return self::query()
             ->where('user_id', $userId)
