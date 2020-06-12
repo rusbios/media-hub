@@ -5,7 +5,7 @@ namespace MediaHub\Models;
 use DateTime;
 
 /**
- * @method static User find(int $id)
+ * @method static UserModels find(int $id)
  *
  * @property int $id
  * @property string $name
@@ -16,7 +16,7 @@ use DateTime;
  * @property DateTime $created_at
  * @property DateTime $updated_at
  */
-class User extends \App\User
+class UserModels extends \App\User
 {
     /**
      * @var array
@@ -28,46 +28,46 @@ class User extends \App\User
     ];
 
     /**
-     * @return Storage[]
+     * @return StorageModels[]
      */
     public function getStorage(): iterable
     {
-        return $this->hasMany(Storage::class, 'id', 'user_id');
+        return $this->hasMany(StorageModels::class, 'id', 'user_id');
     }
 
     /**
-     * @return Album[]
+     * @return AlbumModels[]
      */
     public function getAlbum(): iterable
     {
-        return $this->hasMany(Album::class, 'id', 'user_id');
+        return $this->hasMany(AlbumModels::class, 'id', 'user_id');
     }
 
     /**
-     * @return Storage|null
+     * @return StorageModels|null
      */
-    public function getDefaultStorage(): Storage
+    public function getDefaultStorage(): StorageModels
     {
-        return $this->hasMany(Storage::class, 'user_id', 'id')
+        return $this->hasMany(StorageModels::class, 'user_id', 'id')
             ->where('default', 1)
             ->first();
     }
 
     /**
-     * @return Album|null
+     * @return AlbumModels|null
      */
-    public function getDefaultAlbum(): Album
+    public function getDefaultAlbum(): AlbumModels
     {
-        $album = $this->hasMany(Album::class, 'user_id', 'id')
+        $album = $this->hasMany(AlbumModels::class, 'user_id', 'id')
             ->where('default', 1)
             ->first();
 
         if (!$album) {
-            $album = new Album();
+            $album = new AlbumModels();
             $album->fill([
                 'user_id' => $this->id,
                 'url' => 'default',
-                'access' => Album::ACCESS_PRIVATE,
+                'access' => AlbumModels::ACCESS_PRIVATE,
                 'name' => 'default',
             ]);
             $album->save();

@@ -1,6 +1,6 @@
 <?php
 
-use MediaHub\Models\File;
+use MediaHub\Models\FileModels;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -25,7 +25,7 @@ class CreateFilesTable extends Migration
             $table->binary('preview')->comment('image 400x400px')->nullable();
             $table->integer('size');
             $table->bigInteger('user_id')->index();
-            $table->enum('status', File::STATUSES)->default(File::STATUS_LOADING);
+            $table->enum('status', FileModels::STATUSES)->default(FileModels::STATUS_LOADING);
             $table->timestamps();
             $table->softDeletes();
         });

@@ -3,7 +3,7 @@
 namespace MediaHub\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use MediaHub\Services\{Album as SAlbum, ResponseTrait};
+use MediaHub\Services\{AlbumService, ResponseTrait};
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Route;
@@ -13,14 +13,14 @@ class Albums extends Controller
 {
     use ResponseTrait;
 
-    /** @var SAlbum */
+    /** @var AlbumService */
     private $albumService;
 
     /**
      * Albums constructor.
-     * @param SAlbum $albumService
+     * @param AlbumService $albumService
      */
-    public function __construct(SAlbum $albumService)
+    public function __construct(AlbumService $albumService)
     {
         $this->albumService = $albumService;
     }

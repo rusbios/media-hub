@@ -4,7 +4,7 @@ namespace MediaHub\Validations;
 
 use Illuminate\Http\Request;
 
-class Storage implements ValidInterface
+class StorageValidation implements ValidInterface
 {
     public static function isValid(Request $request): bool
     {

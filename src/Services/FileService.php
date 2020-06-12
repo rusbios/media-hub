@@ -3,15 +3,15 @@
 namespace MediaHub\Services;
 
 use Exception;
-use Illuminate\Support\Facades\Config;
-use MediaHub\Models\File as MFile;
-use MediaHub\Utils\Files as UFiles;
+use Illuminate\Support\Facades\{Config, Storage};
+use MediaHub\Models\FileModels;
+use MediaHub\Utils\Files;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
-class File
+class FileService
 {
     use ResponseTrait;
 
@@ -27,7 +27,7 @@ class File
     {
         $user = $this->decodeToken($request);
 
-        return File::query()
+        return FileModels::query()
             ->where('user_id', $user->id)
             ->orderByDesc('created_at')
             ->paginate();
@@ -46,7 +46,7 @@ class File
     {
         $user = $this->decodeToken($request);
 
-        $file = MFile::getByGuid($guid);
+        $file = FileModels::getByGuid($guid);
         if (!$file || $file->user_id !== $user->id) {
             throw new Exception('no access to this item');
         }
@@ -66,7 +66,7 @@ class File
     {
         $user = $this->decodeToken($request);
 
-        $files = UFiles::createFile(
+        $files = Files::createFile(
             $request->file('files'),
             $user,
             $request->getClientIp(),
@@ -89,7 +89,7 @@ class File
     public function download(Request $request, string $guid): StreamedResponse
     {
         $user = $this->decodeToken($request);
-        $file = MFile::getByGuid($guid);
+        $file = FileModels::getByGuid($guid);
 
         $usersId = $file->getUserAccess();
         $usersId[] = $file->user_id;
@@ -106,7 +106,7 @@ class File
         Config::set('filesystems.disks.ftp.ssl', false);
 
         return response()->streamDownload(function () use ($file) {
-            return Storage::disk($file->status === MFile::STATUS_READY ? 'ftp' : 'local')->get($file->path . $file->guid);
+            return Storage::disk($file->status === FileModels::STATUS_READY ? 'ftp' : 'local')->get($file->path . $file->guid);
         },
             $file->name,
             ['Content-Type' => $file->mime_type]
@@ -128,7 +128,7 @@ class File
     {
         $user = $this->decodeToken($request);
 
-        $file = MFile::getByGuid($guid);
+        $file = FileModels::getByGuid($guid);
 
         if ($file->user_id != $user->id) {
             throw new AuthenticationException();

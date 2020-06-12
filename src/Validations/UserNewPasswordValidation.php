@@ -4,7 +4,7 @@ namespace MediaHub\Validations;
 
 use Illuminate\Http\Request;
 
-class UserNewPassword implements ValidInterface
+class UserNewPasswordValidation implements ValidInterface
 {
     public static function isValid(Request $request): bool
     {

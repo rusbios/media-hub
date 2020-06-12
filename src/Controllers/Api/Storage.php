@@ -5,7 +5,7 @@ namespace MediaHub\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
-use MediaHub\Services\{ResponseTrait, Storage as SStorage};
+use MediaHub\Services\{ResponseTrait, StorageService};
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\{Request, Response};
 
@@ -13,10 +13,14 @@ class Storage extends Controller
 {
     use ResponseTrait;
 
-    /** @var SStorage */
+    /** @var StorageService */
     private $storageService;
 
-    public function __construct(SStorage $storageService)
+    /**
+     * Storage constructor.
+     * @param StorageService $storageService
+     */
+    public function __construct(StorageService $storageService)
     {
         $this->storageService = $storageService;
     }

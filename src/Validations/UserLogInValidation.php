@@ -4,7 +4,7 @@ namespace MediaHub\Validations;
 
 use Illuminate\Http\Request;
 
-class UserLogIn implements ValidInterface
+class UserLogInValidation implements ValidInterface
 {
 
     public static function isValid(Request $request): bool

@@ -2,7 +2,7 @@
 
 namespace MediaHub\Utils;
 
-use MediaHub\Models\{AlbumHasFies, File, User};
+use MediaHub\Models\{AlbumHasFiesModels, FileModels, UserModels};
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\{Config, Storage};
@@ -11,14 +11,14 @@ class Files
 {
     /**
      * @param UploadedFile[] $upFiles
-     * @param User $user
+     * @param UserModels $user
      * @param string|null $ip
      * @param int|null $storage_id
      * @param int|null $album_id
-     * @return File[]
+     * @return FileModels[]
      * @throws Exception
      */
-    public static function createFile(array $upFiles, User $user, ?string $ip, ?int $storage_id, ?int $album_id): iterable
+    public static function createFile(array $upFiles, UserModels $user, ?string $ip, ?int $storage_id, ?int $album_id): iterable
     {
         if (!$storage_id) {
             $storage_id = $user->getDefaultStorage()->id;
@@ -31,7 +31,7 @@ class Files
         $files = [];
 
         foreach ($upFiles as $upFile) {
-            $file = new File();
+            $file = new FileModels();
             $file->fill([
                 'guid' => MbString::makeGUID($ip),
                 'hash' => md5_file($upFile->path()),
@@ -41,10 +41,10 @@ class Files
                 'size' => $upFile->getSize(),
                 'user_id' => $user->id,
                 'path' => Dirs::getPath(ip2long($ip)),
-                'status' => File::STATUS_TEMP,
+                'status' => FileModels::STATUS_TEMP,
             ]);
 
-            if ($clone = File::query()->where('hash', $file->hash)->first()) {
+            if ($clone = FileModels::query()->where('hash', $file->hash)->first()) {
                 //TODO чтото зделать, наверное
             }
 
@@ -55,7 +55,7 @@ class Files
 
             $file->save();
 
-            (new AlbumHasFies())->fill([
+            (new AlbumHasFiesModels())->fill([
                 'file_id' => $file->id,
                 'album_id' => $album_id,
             ])->save();
@@ -67,12 +67,12 @@ class Files
     }
 
     /**
-     * @param File $file
+     * @param FileModels $file
      * @throws Exception
      */
-    public static function uploadFile(File $file): void
+    public static function uploadFile(FileModels $file): void
     {
-        $file->status = File::STATUS_LOADING;
+        $file->status = FileModels::STATUS_LOADING;
         $file->save();
 
         $file->preview = self::createPreview($file);
@@ -80,7 +80,7 @@ class Files
         $storage = $file->getStorage();
 
         if ($storage->type != 'ftp') {
-            $file->status = File::STATUS_ERROR;
+            $file->status = FileModels::STATUS_ERROR;
             $file->save();
             return;
         }
@@ -99,20 +99,20 @@ class Files
 
             Storage::disk('local')->delete($file->path . $file->guid);
         } catch (Exception $e) {
-            $file->status = File::STATUS_ERROR;
+            $file->status = FileModels::STATUS_ERROR;
             $file->save();
             throw $e;
         }
 
-        $file->status = File::STATUS_READY;
+        $file->status = FileModels::STATUS_READY;
         $file->save();
     }
 
     /**
-     * @param File $file
+     * @param FileModels $file
      * @return string|null
      */
-    public static function createPreview(File $file): ?string
+    public static function createPreview(FileModels $file): ?string
     {
 //        $image = Image::make(storage_path('files/' . $file->path . $file->guid));
 //        dd($image->resize(400, 400)->getEncoded());

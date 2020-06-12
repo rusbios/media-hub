@@ -3,20 +3,20 @@
 namespace MediaHub\Services;
 
 use Illuminate\Http\Request;
-use MediaHub\Models\User;
+use MediaHub\Models\UserModels;
 use MediaHub\Utils\Crypt;
 
-class Token
+class TokenService
 {
     protected const LIFETIME_HOURS = 24;
 
     /**
      * @param Request $request
-     * @param User $user
+     * @param UserModels $user
      * @param int|null $lifetimeHours
      * @return string
      */
-    public static function created(Request $request, User $user, int $lifetimeHours = null): string
+    public static function created(Request $request, UserModels $user, int $lifetimeHours = null): string
     {
         if (!$lifetimeHours) $lifetimeHours = self::LIFETIME_HOURS;
 
@@ -54,9 +54,9 @@ class Token
 
     /**
      * @param string $token
-     * @return User|null
+     * @return UserModels|null
      */
-    public static function getUser(string $token): ?User
+    public static function getUser(string $token): ?UserModels
     {
         $data = Crypt::decryptArray($token);
 
@@ -64,7 +64,7 @@ class Token
             return null;
         }
 
-        $user = User::find($data['user_id']);
+        $user = UserModels::find($data['user_id']);
 
         if ($user && $user->email == $data['email']) {
             return $user;

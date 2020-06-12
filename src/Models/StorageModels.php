@@ -19,9 +19,9 @@ use Illuminate\Database\Eloquent\Model;
  * @property DateTime $updated_at
  * @property bool $default
  *
- * @method static Storage find(int $id)
+ * @method static StorageModels find(int $id)
  */
-class Storage extends Model
+class StorageModels extends Model
 {
     protected $table = 'storage';
 

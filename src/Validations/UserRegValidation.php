@@ -2,11 +2,11 @@
 
 namespace MediaHub\Validations;
 
-use MediaHub\Models\User;
+use MediaHub\Models\UserModels;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 
-class UserReg implements ValidInterface
+class UserRegValidation implements ValidInterface
 {
     /**
      * @param Request $request
@@ -33,11 +33,11 @@ class UserReg implements ValidInterface
     }
 
     /**
-     * @param User|Model $user
+     * @param UserModels|Model $user
      * @return bool
      */
-    public static function isDuplicate(User $user): bool
+    public static function isDuplicate(UserModels $user): bool
     {
-        return User::query()->where('email', $user->email)->exists();
+        return UserModels::query()->where('email', $user->email)->exists();
     }
 }

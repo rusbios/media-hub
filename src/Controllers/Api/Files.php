@@ -3,8 +3,7 @@
 namespace MediaHub\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use MediaHub\Services\ResponseTrait;
-use MediaHub\Services\File as SFile;
+use MediaHub\Services\{ResponseTrait, FileService};
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Route;
@@ -15,14 +14,14 @@ class Files extends Controller
 {
     use ResponseTrait;
 
-    /** @var SFile */
+    /** @var FileService */
     private $fileService;
 
     /**
      * Files constructor.
-     * @param SFile $fileService
+     * @param FileService $fileService
      */
-    public function __construct(SFile $fileService)
+    public function __construct(FileService $fileService)
     {
         $this->fileService = $fileService;
     }

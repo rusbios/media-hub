@@ -3,14 +3,14 @@
 namespace MediaHub\Services;
 
 use Exception;
-use MediaHub\Models\{Album as MAlbum, AlbumHasUser};
+use MediaHub\Models\{AlbumModels, AlbumHasUserModels};
 use MediaHub\Utils\MbString;
-use MediaHub\Validations\Album as VAlbum;
+use MediaHub\Validations\AlbumValidation;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class Album
+class AlbumService
 {
     use ResponseTrait;
 
@@ -25,7 +25,7 @@ class Album
     {
         $user = $this->decodeToken($request);
 
-        return MAlbum::query()
+        return AlbumModels::query()
             ->where('user_id', $user->id)
             ->paginate();
     }
@@ -43,7 +43,7 @@ class Album
     {
         $user = $this->decodeToken($request);
 
-        $album = MAlbum::find($id);
+        $album = AlbumModels::find($id);
         if (!$album || $album->user_id !== $user->id) {
             throw new Exception('no access to this item');
         }
@@ -64,8 +64,8 @@ class Album
     {
         $user = $this->decodeToken($request);
 
-        $album = MAlbum::find($id);
-        $data = VAlbum::getValidData($request);
+        $album = AlbumModels::find($id);
+        $data = AlbumValidation::getValidData($request);
         if (!$data || $album->user_id !== $user->id) {
             throw new Exception('incorrect data');
         }
@@ -92,7 +92,7 @@ class Album
     {
         $user = $this->decodeToken($request);
 
-        $data = VAlbum::getValidData($request);
+        $data = AlbumValidation::getValidData($request);
 
         if (!$data) {
             throw new Exception('incorrect data');
@@ -101,35 +101,35 @@ class Album
         $data = [
                 'user_id' => $user->id,
                 'url' => MbString::toUrl($data['name']),
-                'access' => MAlbum::ACCESS_PRIVATE,
+                'access' => AlbumModels::ACCESS_PRIVATE,
             ] + $data;
 
-        if (MAlbum::query()
+        if (AlbumModels::query()
             ->where('url', $data['url'])
             ->where('user_id', $data['user_id'])
             ->first()) {
             $data['url'] .= '_' . strtolower(MbString::generateSymbols(3));
         }
-        $album = (new MAlbum())->fill($data);
+        $album = (new AlbumModels())->fill($data);
         $album->save();
 
         return ['album' => $album->jsonSerialize()];
     }
 
     /**
-     * @param MAlbum $album
+     * @param AlbumModels $album
      * @param int[]|null $userIds
      */
-    protected function openAccessToUsers(MAlbum $album, ?array $userIds): void
+    protected function openAccessToUsers(AlbumModels $album, ?array $userIds): void
     {
-        if ($album->access < MAlbum::ACCESS_PROTECT) {
-            $album->access = MAlbum::ACCESS_PROTECT;
+        if ($album->access < AlbumModels::ACCESS_PROTECT) {
+            $album->access = AlbumModels::ACCESS_PROTECT;
             $album->save();
         }
 
         if ($userIds) {
             foreach ($userIds as $userId) {
-                (new AlbumHasUser())->fill([
+                (new AlbumHasUserModels())->fill([
                     'user_id' => $userId,
                     'album_id' => $album->id,
                 ])->save();
@@ -144,7 +144,7 @@ class Album
     protected function closeAccessToUsers(int $albumId, ?array $userIds): void
     {
         if ($userIds) {
-            AlbumHasUser::query()
+            AlbumHasUserModels::query()
                 ->where('album_id', $albumId)
                 ->whereIn('user_id', $userIds)
                 ->delete();

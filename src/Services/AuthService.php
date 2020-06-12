@@ -6,11 +6,11 @@ use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use MediaHub\Models\User;
+use MediaHub\Models\UserModels;
 use MediaHub\Utils\MbString;
-use MediaHub\Validations\{UserLogIn, UserNewPassword, UserReg};
+use MediaHub\Validations\{UserLogInValidation, UserNewPasswordValidation, UserRegValidation};
 
-class Auth
+class AuthService
 {
     use ResponseTrait;
 
@@ -21,14 +21,14 @@ class Auth
      */
     public function registration(Request $request): array
     {
-        $data = UserReg::getValidData($request);
+        $data = UserRegValidation::getValidData($request);
 
         $data['password'] = Hash::make($data['password']);
         if ($data) {
-            /** @var User $user */
-            $user = (new User())->fill($data);
+            /** @var UserModels $user */
+            $user = (new UserModels())->fill($data);
 
-            if (UserReg::isDuplicate($user)) {
+            if (UserRegValidation::isDuplicate($user)) {
                 throw new Exception('Such user already exists');
             }
 
@@ -47,8 +47,8 @@ class Auth
      */
     public function recover(string $email): array
     {
-        /** @var User $user */
-        $user = User::query()
+        /** @var UserModels $user */
+        $user = UserModels::query()
             ->where('email', $email)
             ->first();
 
@@ -71,8 +71,8 @@ class Auth
      */
     public function confirmEmail(Request $request): array
     {
-        /** @var User $user */
-        $user = User::query()
+        /** @var UserModels $user */
+        $user = UserModels::query()
             ->where('email', $request->get('email', ''))
             ->first();
 
@@ -95,7 +95,7 @@ class Auth
     public function newPass(Request $request): array
     {
         if ($request->get('token')) {
-            $user = User::query()
+            $user = UserModels::query()
                 ->where('remember_token', $request->get('token'))
                 ->first();
         } else {
@@ -106,7 +106,7 @@ class Auth
             throw new Exception('Invalid token');
         }
 
-        $data = UserNewPassword::getValidData($request);
+        $data = UserNewPasswordValidation::getValidData($request);
 
         if (!$data) {
             throw new Exception('Invalid password');
@@ -126,16 +126,16 @@ class Auth
      */
     public function getApiToken(Request $request): array
     {
-        $data = UserLogIn::getValidData($request);
+        $data = UserLogInValidation::getValidData($request);
 
         if ($data) {
-            /** @var User $user */
-            $user = User::query()
+            /** @var UserModels $user */
+            $user = UserModels::query()
                 ->where('email', $data['email'])
                 ->first();
 
             if ($user && Hash::check($data['password'], $user->password)) {
-                return ['token' => Token::created($request, $user)];
+                return ['token' => TokenService::created($request, $user)];
             }
         }
 

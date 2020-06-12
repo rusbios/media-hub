@@ -1,6 +1,6 @@
 <?php
 
-use MediaHub\Models\Album;
+use MediaHub\Models\AlbumModels;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,7 +21,7 @@ class CreateAlbumsTable extends Migration
             $table->bigInteger('user_id')->index();
             $table->timestamps();
             $table->softDeletes();
-            $table->enum('access', Album::ACCESSES)->default(Album::ACCESS_PRIVATE);
+            $table->enum('access', AlbumModels::ACCESSES)->default(AlbumModels::ACCESS_PRIVATE);
             $table->string('url')->index();
         });
     }

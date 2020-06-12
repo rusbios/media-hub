@@ -6,16 +6,16 @@ use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\{Request, Response};
 use Illuminate\Pagination\LengthAwarePaginator;
-use MediaHub\Models\User;
+use MediaHub\Models\UserModels;
 
 trait ResponseTrait
 {
     /**
      * @param Request $request
-     * @return User
+     * @return UserModels
      * @throws AuthenticationException
      */
-    protected function decodeToken(Request $request): User
+    protected function decodeToken(Request $request): UserModels
     {
         $token = $request->header('X-API-TOKEN', $request->get('api_token'));
 
@@ -23,8 +23,8 @@ trait ResponseTrait
             throw new AuthenticationException();
         }
 
-        if (Token::isValid($request, $token)) {
-            return Token::getUser($token);
+        if (TokenService::isValid($request, $token)) {
+            return TokenService::getUser($token);
         }
 
         throw new AuthenticationException('Invalid token');

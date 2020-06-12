@@ -18,9 +18,9 @@ use Illuminate\Database\Eloquent\{Model, Relations\HasOne, SoftDeletes};
  * @property int $access
  * @property string $url
  *
- * @method static Album find(int $id)
+ * @method static AlbumModels find(int $id)
  */
-class Album extends Model
+class AlbumModels extends Model
 {
     use SoftDeletes;
 
@@ -48,11 +48,11 @@ class Album extends Model
     ];
 
     /**
-     * @return HasOne|User
+     * @return HasOne|UserModels
      */
     public function getUser()
     {
-        return $this->hasOne(User::class, 'user_id', 'id');
+        return $this->hasOne(UserModels::class, 'user_id', 'id');
     }
 
     /**
@@ -60,7 +60,7 @@ class Album extends Model
      */
     public function getAccessUsers(): array
     {
-        return $this->hasMany(AlbumHasUser::class, 'id', 'album_id')
+        return $this->hasMany(AlbumHasUserModels::class, 'id', 'album_id')
             ->pluck('user_id')->all();
     }
 

@@ -4,7 +4,7 @@ namespace MediaHub\Controllers;
 
 use App\Http\Controllers\Controller;
 use Exception;
-use MediaHub\Services\{Auth as SAuth, ResponseTrait};
+use MediaHub\Services\{AuthService, ResponseTrait};
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\{Request, Response};
 use Illuminate\Support\Facades\Route;
@@ -13,14 +13,14 @@ class Auth extends Controller
 {
     use ResponseTrait;
 
-    /** @var SAuth */
+    /** @var AuthService */
     private $authService;
 
     /**
      * Auth constructor.
-     * @param SAuth $authService
+     * @param AuthService $authService
      */
-    public function __construct(SAuth $authService)
+    public function __construct(AuthService $authService)
     {
         $this->authService = $authService;
     }

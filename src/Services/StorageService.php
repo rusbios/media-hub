@@ -3,13 +3,13 @@
 namespace MediaHub\Services;
 
 use Exception;
-use MediaHub\Models\Storage as MStorage;
-use MediaHub\Validations\Storage as VStorage;
+use MediaHub\Models\StorageModels;
+use MediaHub\Validations\StorageValidation;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\LengthAwarePaginator;
 
-class Storage
+class StorageService
 {
     use ResponseTrait;
 
@@ -24,7 +24,7 @@ class Storage
     {
         $user = $this->decodeToken($request);
 
-        return MStorage::query()
+        return StorageModels::query()
             ->where('user_id', $user->id)
             ->paginate();
     }
@@ -41,7 +41,7 @@ class Storage
     public function get(Request $request, int $id): array
     {
         $user = $this->decodeToken($request);
-        $ftp = MStorage::find($id);
+        $ftp = StorageModels::find($id);
 
         if (!$ftp || $ftp->user_id !== $user->id) {
             throw new Exception('no access to this item');
@@ -62,8 +62,8 @@ class Storage
     public function update(Request $request, int $id): array
     {
         $user = $this->decodeToken($request);
-        $ftp = MStorage::find($id);
-        $data = VStorage::getValidData($request);
+        $ftp = StorageModels::find($id);
+        $data = StorageValidation::getValidData($request);
 
         if (!$data || $ftp->user_id !== $user->id) {
             throw new Exception('incorrect data');
@@ -89,7 +89,7 @@ class Storage
     public function create(Request $request): array
     {
         $user = $this->decodeToken($request);
-        $data = VStorage::getValidData($request);
+        $data = StorageValidation::getValidData($request);
 
         if (!$data) {
             throw new Exception('incorrect data');
@@ -101,7 +101,7 @@ class Storage
                 'default' => true,
                 'user_id' => $user->id,
             ] + $data;
-        $ftp = (new MStorage())->fill($data);
+        $ftp = (new StorageModels())->fill($data);
         $ftp->save();
 
         return ['storage' => $ftp];
@@ -109,7 +109,7 @@ class Storage
 
     private function resetDefaults(int $userId): void
     {
-        MStorage::query()
+        StorageModels::query()
             ->where('user_id', $userId)
             ->update(['default' => 0]);
     }

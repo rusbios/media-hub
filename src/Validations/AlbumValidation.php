@@ -4,7 +4,7 @@ namespace MediaHub\Validations;
 
 use Illuminate\Http\Request;
 
-class Album implements ValidInterface
+class AlbumValidation implements ValidInterface
 {
     public static function isValid(Request $request): bool
     {

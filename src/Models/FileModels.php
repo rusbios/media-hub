@@ -23,9 +23,9 @@ use Illuminate\Database\Eloquent\{Model, SoftDeletes};
  * @property DateTime updated_at
  * @property DateTime deleted_at
  *
- * @method static File find(int $id)
+ * @method static FileModels find(int $id)
  */
-class File extends Model
+class FileModels extends Model
 {
     use SoftDeletes;
 
@@ -55,11 +55,11 @@ class File extends Model
 
     /**
      * @param string $guid
-     * @return File
+     * @return FileModels
      */
     public static function getByGuid(string $guid): self
     {
-        return File::query()
+        return FileModels::query()
             ->where('guid', $guid)
             ->whereNotNull('deleted_at')
             ->first();
@@ -70,18 +70,18 @@ class File extends Model
      */
     public function getUserAccess(): array
     {
-        return AlbumHasUser::query()
-            ->whereIn('album_id', AlbumHasFies::query()->where('file_id', $this->id)
+        return AlbumHasUserModels::query()
+            ->whereIn('album_id', AlbumHasFiesModels::query()->where('file_id', $this->id)
             ->pluck('album_id')
             ->all())->pluck('user_id')->all();
     }
 
     /**
-     * @return Storage
+     * @return StorageModels
      */
     public function getStorage()
     {
-        return Storage::find($this->storage_id);
+        return StorageModels::find($this->storage_id);
     }
 
     /**

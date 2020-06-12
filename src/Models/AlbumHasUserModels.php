@@ -5,18 +5,18 @@ namespace MediaHub\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class AlbumHasFies
+ * Class AlbumHasUser
  * @package App\Models
- * @property int $file_id
+ * @property int $user_id
  * @property int $album_id
  */
-class AlbumHasFies extends Model
+class AlbumHasUserModels extends Model
 {
     public const CREATED_AT = null;
     public const UPDATED_AT = null;
 
     protected $fillable = [
-        'file_id',
+        'user_id',
         'album_id',
     ];
 }
