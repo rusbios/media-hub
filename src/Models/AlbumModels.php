@@ -3,6 +3,7 @@
 namespace MediaHub\Models;
 
 use DateTime;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\{Model, Relations\HasOne, SoftDeletes};
 
 /**
@@ -62,6 +63,20 @@ class AlbumModels extends Model
     {
         return $this->hasMany(AlbumHasUserModels::class, 'id', 'album_id')
             ->pluck('user_id')->all();
+    }
+
+    /**
+     * @param int $userId
+     * @param int $page
+     * @param int|null $prePage
+     * @return LengthAwarePaginator
+     */
+    public function getStory(int $userId, int $page = 1, int $prePage = null): LengthAwarePaginator
+    {
+        return self::query()
+            ->where('user_id', $userId)
+            ->whereNull('deleted_at')
+            ->paginate($prePage, ['*'], 'page', $page);
     }
 
     /**

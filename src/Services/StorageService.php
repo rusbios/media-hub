@@ -24,9 +24,7 @@ class StorageService
     {
         $user = $this->decodeToken($request);
 
-        return StorageModels::query()
-            ->where('user_id', $user->id)
-            ->paginate();
+        return StorageModels::getStory($user->id, $request->get('page'));
     }
 
     /**

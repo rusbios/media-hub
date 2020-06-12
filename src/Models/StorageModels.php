@@ -4,6 +4,7 @@ namespace MediaHub\Models;
 
 use DateTime;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\LengthAwarePaginator;
 
 /**
  * Class Ftp
@@ -38,6 +39,19 @@ class StorageModels extends Model
         'password',
         'user_id',
     ];
+
+    /**
+     * @param int $userId
+     * @param int $page
+     * @param int|null $prePage
+     * @return LengthAwarePaginator
+     */
+    public function getStory(int $userId, int $page = 1, int $prePage = null): LengthAwarePaginator
+    {
+        return self::query()
+            ->where('user_id', $userId)
+            ->paginate($prePage, ['*'], 'page', $page);
+    }
 
     /**
      * @param bool $isShort

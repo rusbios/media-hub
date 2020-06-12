@@ -25,9 +25,7 @@ class AlbumService
     {
         $user = $this->decodeToken($request);
 
-        return AlbumModels::query()
-            ->where('user_id', $user->id)
-            ->paginate();
+        return AlbumModels::getStory($user->id, $request->get('page'));
     }
 
     /**

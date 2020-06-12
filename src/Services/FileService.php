@@ -27,10 +27,7 @@ class FileService
     {
         $user = $this->decodeToken($request);
 
-        return FileModels::query()
-            ->where('user_id', $user->id)
-            ->orderByDesc('created_at')
-            ->paginate();
+        return FileModels::getStory($user->id, $request->get('page'));
     }
 
     /**
